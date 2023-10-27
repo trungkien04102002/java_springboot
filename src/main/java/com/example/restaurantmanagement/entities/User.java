@@ -21,11 +21,13 @@ import java.sql.Timestamp;
 @Table(name = "user", schema = "public")
 public class User {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
   @Column(name = "email", unique = true)
   private String email;
   private String first_name;
   private String last_name;
+  private String password;
+  @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
   private Timestamp created_at;
 }

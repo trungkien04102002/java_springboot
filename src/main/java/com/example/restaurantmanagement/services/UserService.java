@@ -2,6 +2,7 @@ package com.example.restaurantmanagement.services;
 
 import java.util.Optional;
 import com.example.restaurantmanagement.entities.*;
+import com.example.restaurantmanagement.models.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,12 +44,38 @@ public class UserService {
   }
 
   public User findById(Long userId) {
-    // Optional<User> optionalUser = userRepository.findById(userId);
-    // User user = optionalUser.get();
-    // return user;
     return userRepository
         .findById(userId)
         .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "User not found"));
-    // return userRepository.findById(userId);
+  }
+
+  public User create(UserRQ requestData) {
+    User creationUserData = User.builder()
+        .first_name(requestData.getFirst_name())
+        .last_name(requestData.getLast_name())
+        .password(requestData.getPassword())
+        .email(requestData.getEmail())
+        .build();
+    User createdUser = userRepository.save(creationUserData);
+    return createdUser;
+  }
+
+  public User updateById(Long userId, UpdateUserRQ requestData) {
+    User user = this.findById(userId);
+
+    String newFirstName = requestData.getFirst_name() != null ? requestData.getFirst_name() : user.getFirst_name();
+    String newLastName = requestData.getLast_name() != null ? requestData.getLast_name() : user.getLast_name();
+    String newEmail = requestData.getEmail() != null ? requestData.getEmail() : user.getEmail();
+
+    user.setFirst_name(newFirstName);
+    user.setLast_name(newLastName);
+    user.setEmail(newEmail);
+
+    User updatedUser = userRepository.save(user);
+    return updatedUser;
+  }
+
+  public void deleteById(Long userId) {
+    userRepository.deleteById(userId);
   }
 }
