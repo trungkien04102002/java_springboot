@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 // import org.springframework.web.client.HttpClientErrorException;
 
 import com.example.restaurantmanagement.entities.Dish;
-
+import com.example.restaurantmanagement.models.DishIdsRQ;
 import com.example.restaurantmanagement.models.DishRQ;
 import java.util.List;
 import java.util.ArrayList;
@@ -55,11 +55,9 @@ public class DishController {
 
   @PostMapping("/getDishIds")
   @ResponseBody
-  public ResponseEntity<List<Dish>> getDishByIds(ArrayList<Integer> dishIds) {
-    // System.out.println("dishIds: " + dishIds); // Print the dishIds
-    Logger logger = LoggerFactory.getLogger(getClass());
-    logger.info("dishIds: {}", dishIds); // Log the dishIds
-    List<Dish> dishes = dishService.findByIds(dishIds);
+  public ResponseEntity<List<Dish>> getDishByIds(@RequestBody @Valid DishIdsRQ dishIds) {
+    System.out.println("dishIds: " + dishIds);
+    List<Dish> dishes = dishService.findByIds(dishIds.getDishIds());
     return ResponseEntity.ok(dishes);
   }
 }
