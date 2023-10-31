@@ -31,4 +31,17 @@ public class Category {
   @ManyToMany
   @JoinTable(name = "category_dish", joinColumns = @JoinColumn(name = "category_id"), inverseJoinColumns = @JoinColumn(name = "dish_id"))
   private List<Dish> dishes;
+
+  public void addDish(Dish dish) {
+    this.dishes.add(dish);
+    dish.getCategories().add(this);
+  }
+
+  public void removeDish(Integer dishId) {
+    Dish dish = this.dishes.stream().filter(t -> t.getId() == dishId).findFirst().orElse(null);
+    if (dish != null) {
+      this.dishes.remove(dish);
+      dish.getCategories().remove(this);
+    }
+  }
 }

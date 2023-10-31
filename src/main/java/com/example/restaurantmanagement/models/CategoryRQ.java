@@ -4,12 +4,12 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @Data
 public class CategoryRQ {
   @NotNull
   @Length(max = 100)
   private String name;
-  private List<Integer> dishIds;
+  private ArrayList<Integer> dishIds;
 }
