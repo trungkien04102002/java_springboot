@@ -14,13 +14,16 @@ import jakarta.persistence.PersistenceContext;
 // import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-
+import com.querydsl.core.types.Predicate;
 // import org.springframework.web.client.HttpClientErrorException;
 import java.util.List;
 import java.util.ArrayList;
 
 @Service
 public class UserService {
+
+  private QUser qUser = QUser.user;
+
   @Autowired
   private UserRepository userRepository;
 
@@ -29,24 +32,29 @@ public class UserService {
 
   public List<User> findAll() {
     // Using pure JPA
-    List<User> users = new ArrayList<User>();
-    userRepository.findAll().forEach(users::add);
-    return users;
+    // List<User> users = new ArrayList<User>();
+    // userRepository.findAll().forEach(users::add);
+    // return users;
 
     // Using queryDSL
 
-    // QUser user = QUser.user;
-    // JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+    QUser user = QUser.user;
+    JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
-    // return queryFactory
-    // .selectFrom(user)
-    // .fetch();
+    return queryFactory
+        .selectFrom(user)
+        .fetch();
+
   }
 
-  public User findById(Long userId) {
-    return userRepository
-        .findById(userId)
-        .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "User not found"));
+  public User findById(Integer userId) {
+    Predicate predicate = qUser.id.eq(userId);
+    User user = userRepository.findOne(predicate).orElse(null);
+    return user;
+    // return userRepository
+    // .findById(userId)
+    // .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "User
+    // not found"));
   }
 
   public User create(UserRQ requestData) {
@@ -60,7 +68,7 @@ public class UserService {
     return createdUser;
   }
 
-  public User updateById(Long userId, UpdateUserRQ requestData) {
+  public User updateById(Integer userId, UpdateUserRQ requestData) {
     User user = this.findById(userId);
 
     String newFirstName = requestData.getFirst_name() != null ? requestData.getFirst_name() : user.getFirst_name();
@@ -75,7 +83,7 @@ public class UserService {
     return updatedUser;
   }
 
-  public void deleteById(Long userId) {
+  public void deleteById(Integer userId) {
     userRepository.deleteById(userId);
   }
 }

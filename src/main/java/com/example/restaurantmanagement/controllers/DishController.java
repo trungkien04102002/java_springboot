@@ -26,6 +26,8 @@ import com.example.restaurantmanagement.entities.Category;
 import com.example.restaurantmanagement.entities.Dish;
 import com.example.restaurantmanagement.models.DishIdsRQ;
 import com.example.restaurantmanagement.models.DishRQ;
+import com.example.restaurantmanagement.repositories.CategoryRepository;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -37,6 +39,9 @@ public class DishController {
 
   @Autowired
   private CategoryService categoryService;
+
+  @Autowired
+  private CategoryRepository categoryRepository;
 
   @PostMapping("/dishes")
   @ResponseBody
@@ -85,6 +90,7 @@ public class DishController {
     Category category = categoryService.findById(categoryId);
     Dish dish = dishService.findById(dishId);
     category.addDish(dish);
+    categoryRepository.save(category);
     return ResponseEntity.ok(category);
   }
 
