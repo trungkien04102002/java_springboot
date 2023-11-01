@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import com.example.restaurantmanagement.models.CategoryIdsRQ;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +19,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-// import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 // import org.springframework.web.client.HttpClientErrorException;
 
@@ -64,5 +65,12 @@ public class CategoryController {
     Category deletedCategory = categoryService.findById(id);
     categoryService.deleteById(id);
     return ResponseEntity.status(HttpStatus.OK).body(deletedCategory);
+  }
+
+  @PostMapping("/getCategoryIds")
+  @ResponseBody
+  public ResponseEntity<List<Category>> getDishByIds(@RequestBody @Valid CategoryIdsRQ categoryIds) {
+    List<Category> categories = categoryService.findByIds(categoryIds.getCategoryIds());
+    return ResponseEntity.ok(categories);
   }
 }

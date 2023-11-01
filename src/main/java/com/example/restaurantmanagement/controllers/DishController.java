@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ import com.example.restaurantmanagement.repositories.CategoryRepository;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Controller
 @RequestMapping(path = "api/v1")
@@ -52,8 +54,8 @@ public class DishController {
 
   @GetMapping("/dishes")
   @ResponseBody
-  public ResponseEntity<List<Dish>> getAllDishes() {
-    List<Dish> dishes = dishService.findAll();
+  public ResponseEntity<List<Dish>> getAllDishes(@RequestParam(name = "price") Optional<Float> price) {
+    List<Dish> dishes = dishService.findAll(price);
     return ResponseEntity.ok(dishes);
   }
 
@@ -67,7 +69,6 @@ public class DishController {
   @PostMapping("/dishes/getDishIds")
   @ResponseBody
   public ResponseEntity<List<Dish>> getDishByIds(@RequestBody @Valid DishIdsRQ dishIds) {
-    // System.out.println("dishIds: " + dishIds);
     List<Dish> dishes = dishService.findByIds(dishIds.getDishIds());
     return ResponseEntity.ok(dishes);
   }
@@ -93,13 +94,4 @@ public class DishController {
     categoryRepository.save(category);
     return ResponseEntity.ok(category);
   }
-
-  // @GetMapping("/dishes/{dishId}/categories")
-  // @ResponseBody
-  // public ResponseEntity<List<Category>>
-  // getAllCategoriesByDishId(@PathVariable(value = "dishId") Integer dishId) {
-  // Dish dish = dishService.findById((dishId));
-  // List<Category> categories = findCatogoryByDishesId
-  // }
-
 }

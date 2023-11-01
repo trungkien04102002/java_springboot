@@ -35,7 +35,6 @@ public class UserService {
     // List<User> users = new ArrayList<User>();
     // userRepository.findAll().forEach(users::add);
     // return users;
-
     // Using queryDSL
 
     QUser user = QUser.user;

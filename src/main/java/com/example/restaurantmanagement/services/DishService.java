@@ -5,9 +5,8 @@ import com.example.restaurantmanagement.models.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-
 import com.example.restaurantmanagement.repositories.DishRepository;
-
+import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -17,11 +16,15 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 public class DishService {
+  private QDish qDish = QDish.dish;
+
   @Autowired
   private DishRepository dishRepository;
+
   @PersistenceContext
   private EntityManager entityManager;
 
@@ -37,11 +40,16 @@ public class DishService {
     return createdDish;
   }
 
-  public List<Dish> findAll() {
-    JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
-    return queryFactory
-        .selectFrom(QDish.dish)
-        .fetch();
+  public List<Dish> findAll(Optional<Float> price) {
+    List<Dish> dishes = new ArrayList<Dish>();
+    if (price.isPresent()) {
+      float filterPrice = price.get();
+      Predicate predicate = qDish.price.gt(filterPrice);
+      dishRepository.findAll(predicate).forEach(dishes::add);
+    } else {
+      dishRepository.findAll().forEach(dishes::add);
+    }
+    return dishes;
   }
 
   public Dish findById(Integer dishId) {
@@ -51,10 +59,9 @@ public class DishService {
   }
 
   public List<Dish> findByIds(ArrayList<Integer> dishIds) {
-    JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
-    return queryFactory
-        .selectFrom(QDish.dish)
-        .where(QDish.dish.id.in(dishIds))
-        .fetch();
+    Predicate predicate = qDish.id.in(dishIds);
+    List<Dish> dishes = new ArrayList<Dish>();
+    dishRepository.findAll(predicate).forEach(dishes::add);
+    return dishes;
   }
 }
