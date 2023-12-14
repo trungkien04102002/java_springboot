@@ -27,10 +27,11 @@ import com.example.restaurantmanagement.models.UserRQ;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin()
 @Controller
 @RequestMapping(path = "api/v1/user")
 public class UserController {
+
   @Autowired
   private UserService userService;
 
